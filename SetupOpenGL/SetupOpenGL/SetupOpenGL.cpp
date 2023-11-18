@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Shader.h"
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -187,6 +188,7 @@ int main(int argc, char **argv)
 
 	glEnable(GL_DEPTH_TEST); 
 
+	//vertex shader source code
 	const char* vertexShaderSource = R"glsl(
 		#version 330 core
 
@@ -209,24 +211,7 @@ int main(int argc, char **argv)
 		}
 		)glsl";
 
-
-	// Vertex Shader
-
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	GLint  success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// Fragment Shader
+	// Fragment Shader source code
 
 	const char* fragmentShaderSource = R"glsl(
 		#version 330 core
@@ -246,47 +231,17 @@ int main(int argc, char **argv)
 			outColor = mix(colTex1, colTex2, 0.5);
 		})glsl";
 
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-	
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	GLuint shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
+	//Create the shader program using the shader class
+	Shader shaderProgram(vertexShaderSource, fragmentShaderSource);
 
 	// 3. then set our vertex attributes pointers
-	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+	GLint posAttrib = glGetAttribLocation(shaderProgram.ID, "position");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 
-	/*GLint colorAttrib = glGetAttribLocation(shaderProgram, "color");
-	glEnableVertexAttribArray(colorAttrib);
-	glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));*/
-
-	GLint textCoordAttrib = glGetAttribLocation(shaderProgram, "textcoord");
+	GLint textCoordAttrib = glGetAttribLocation(shaderProgram.ID, "textcoord");
 	glEnableVertexAttribArray(textCoordAttrib);
 	glVertexAttribPointer(textCoordAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
 
 	GLuint texture;
 	glGenTextures(1, &texture);
@@ -334,13 +289,11 @@ int main(int argc, char **argv)
 		std::cout << "Failed to load texture" << std::endl;
 	}
 
-
-	
-	glUseProgram(shaderProgram);
+	shaderProgram.use();
 	GLuint textureLocation;
 	GLuint textureLocation2;
-	textureLocation = glGetUniformLocation(shaderProgram, "ourTexture");
-	textureLocation2 = glGetUniformLocation(shaderProgram, "ourTexture2");
+	textureLocation = glGetUniformLocation(shaderProgram.ID, "ourTexture");
+	textureLocation2 = glGetUniformLocation(shaderProgram.ID, "ourTexture2");
 
 	glUniform1i(textureLocation, 0);
 	glUniform1i(textureLocation2, 1);
@@ -364,13 +317,13 @@ int main(int argc, char **argv)
 	glm::vec3(-1.3f,  1.0f, -1.5f) 
 	}; 
 
-	GLuint modelLocation = glGetUniformLocation(shaderProgram, "model");
+	GLuint modelLocation = glGetUniformLocation(shaderProgram.ID, "model");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 
-	GLuint viewLocation = glGetUniformLocation(shaderProgram, "view");
+	GLuint viewLocation = glGetUniformLocation(shaderProgram.ID, "view");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
 
-	GLuint projectionLocation = glGetUniformLocation(shaderProgram, "projection");
+	GLuint projectionLocation = glGetUniformLocation(shaderProgram.ID, "projection");
 	glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 
 	glClearColor(0.2f, 0.5f, 0.3f, 1.0f);
@@ -409,7 +362,7 @@ int main(int argc, char **argv)
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
-		glUseProgram(shaderProgram);
+		shaderProgram.use();
 		glBindVertexArray(vao);
 
 		glActiveTexture(GL_TEXTURE0); 
