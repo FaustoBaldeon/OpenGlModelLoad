@@ -1,0 +1,11 @@
+﻿  glad.c
+  SetupOpenGL.cpp
+C:\Users\faust\Desktop\IPL\3rdYear\ComputerGraphics\Projects\sample_project\SetupOpenGL\SetupOpenGL\SetupOpenGL.cpp(40,14): warning C4244: 'initializing': conversion from 'Sint32' to 'float', possible loss of data
+C:\Users\faust\Desktop\IPL\3rdYear\ComputerGraphics\Projects\sample_project\SetupOpenGL\SetupOpenGL\SetupOpenGL.cpp(41,14): warning C4244: 'initializing': conversion from 'Sint32' to 'float', possible loss of data
+C:\Users\faust\Desktop\IPL\3rdYear\ComputerGraphics\Projects\sample_project\SetupOpenGL\SetupOpenGL\SetupOpenGL.cpp(100,142): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\faust\Desktop\IPL\3rdYear\ComputerGraphics\Projects\sample_project\SetupOpenGL\SetupOpenGL\SetupOpenGL.cpp(100,129): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\faust\Desktop\IPL\3rdYear\ComputerGraphics\Projects\sample_project\SetupOpenGL\SetupOpenGL\SetupOpenGL.cpp(382,22): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+C:\Users\faust\Desktop\IPL\3rdYear\ComputerGraphics\Projects\sample_project\SetupOpenGL\SetupOpenGL\SetupOpenGL.cpp(391,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  stb_image.cpp
+  Generating Code...
+  SetupOpenGL.vcxproj -> C:\Users\faust\Desktop\IPL\3rdYear\ComputerGraphics\Projects\sample_project\SetupOpenGL\x64\Debug\SetupOpenGL.exe
